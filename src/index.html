@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="zETyiSdUcQ0VwDkSH5wDsk">
+<head data-page-node-id="ZgiPGH2uuu0aD5WDQjB8Ri">
+<meta charset="UTF-8" data-page-node-id="pFNDwV7QRAo4Mrbw9AkHFY">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="r2daYAO05ySJuDT33lrCMn">
+<title>客智分层 —— AI客户价值识别与精准营销系统</title>
+<style>
+  :root{
+    --navy:#0e2a47; --navy-2:#163a5f; --navy-3:#1f4e79;
+    --blue:#2f6fb2; --blue-light:#e8f1fa;
+    --bg:#f4f7fb; --card:#ffffff; --line:#e3eaf2;
+    --text:#1c2b3a; --muted:#6b7d90;
+    --red:#d93025; --red-bg:#fdecea;
+    --orange:#e8710a; --orange-bg:#fff4e5;
+    --green:#1e8e3e; --green-bg:#e6f4ea;
+    --gold:#b8860b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+  /* ---------- 布局 ---------- */
+  .layout{display:flex;min-height:100vh;}
+  .sidebar{width:220px;background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);color:#dbe7f3;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:10;}
+  .brand{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .brand h1{font-size:20px;color:#fff;letter-spacing:1px;}
+  .brand p{font-size:11px;color:#9fb8d0;margin-top:4px;}
+  .nav{flex:1;padding:12px 0;overflow-y:auto;}
+  .nav a{display:flex;align-items:center;gap:10px;padding:11px 20px;color:#b9cbdd;text-decoration:none;font-size:14px;border-left:3px solid transparent;cursor:pointer;transition:all .15s;}
+  .nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav a.active{background:rgba(255,255,255,.10);color:#fff;border-left-color:#5aa9e6;}
+  .nav .ico{width:18px;text-align:center;}
+  .side-foot{padding:14px 20px;font-size:11px;color:#7e97ae;border-top:1px solid rgba(255,255,255,.12);}
+  .main{flex:1;margin-left:220px;padding:24px 28px 48px;min-width:0;}
+  .page{display:none;}
+  .page.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+  .page-head h2{font-size:22px;color:var(--navy);}
+  .page-head .sub{color:var(--muted);font-size:13px;margin-top:4px;}
+  .head-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .date-label{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px 12px;}
+  .date-label input{border:none;font-family:inherit;font-size:13px;color:var(--text);outline:none;background:transparent;}
+  /* ---------- 卡片（统一视觉规范） ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;box-shadow:0 1px 3px rgba(16,42,71,.05);}
+  .card h3{font-size:15px;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;text-align:left;}
+  .card h3::before{content:"";width:4px;height:16px;background:var(--blue);border-radius:2px;flex:none;}
+  .card h3 .h3-sub{margin-left:auto;font-size:12px;color:var(--muted);font-weight:400;}
+  .grid{display:grid;gap:18px;}
+  /* ---------- KPI 指标卡（统一高度字号） ---------- */
+  .kpi-row{display:grid;grid-template-columns:repeat(7,1fr);gap:18px;margin-bottom:18px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 16px 14px;position:relative;overflow:hidden;min-height:104px;display:flex;flex-direction:column;justify-content:center;}
+  .kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);}
+  .kpi.k-navy::after{background:var(--navy-3);}
+  .kpi.k-red::after{background:var(--red);}
+  .kpi.k-orange::after{background:var(--orange);}
+  .kpi.k-green::after{background:var(--green);}
+  .kpi.k-gold::after{background:var(--gold);}
+  .kpi .num{font-size:24px;font-weight:700;color:var(--navy);line-height:1.15;font-variant-numeric:tabular-nums;}
+  .kpi .num small{font-size:13px;font-weight:400;color:var(--muted);}
+  .kpi .lbl{color:var(--muted);font-size:12px;margin-top:4px;}
+  .kpi .sub{font-size:11px;color:var(--muted);margin-top:3px;}
+  .kpi.clickable{cursor:pointer;transition:box-shadow .15s;}
+  .kpi.clickable:hover{box-shadow:0 4px 14px rgba(217,48,37,.15);}
+  @media(max-width:1400px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
+  @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+  /* ---------- 图表卡片（统一规范） ---------- */
+  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+  .chart-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;box-shadow:0 1px 3px rgba(16,42,71,.05);min-width:0;}
+  .chart-card h3{font-size:15px;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px;text-align:left;}
+  .chart-card h3::before{content:"";width:4px;height:16px;background:var(--blue);border-radius:2px;flex:none;}
+  .chart-card h3 .h3-sub{margin-left:auto;font-size:12px;color:var(--muted);font-weight:400;}
+  .chart-wrap{position:relative;height:330px;width:100%;}
+  .chart-wrap canvas{display:block;width:100%;height:100%;}
+  @media(max-width:1100px){.chart-grid{grid-template-columns:1fr;}}
+  /* ---------- Tooltip ---------- */
+  #chartTip{position:fixed;z-index:200;pointer-events:none;background:rgba(14,42,71,.94);color:#eef4fa;font-size:12px;line-height:1.7;padding:8px 12px;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.25);display:none;max-width:260px;}
+  #chartTip b{color:#fff;}
+  /* ---------- 统计卡（预警页保留） ---------- */
+  .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-bottom:18px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;position:relative;overflow:hidden;}
+  .stat::after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);}
+  .stat.s-red::after{background:var(--red);}
+  .stat.s-orange::after{background:var(--orange);}
+  .stat.s-green::after{background:var(--green);}
+  .stat.s-gold::after{background:var(--gold);}
+  .stat .num{font-size:30px;font-weight:700;color:var(--navy);line-height:1.1;}
+  .stat .lbl{color:var(--muted);font-size:13px;margin-top:6px;}
+  .stat .pct{font-size:12px;color:var(--muted);margin-top:4px;}
+  /* ---------- 按钮 ---------- */
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:6px;font-size:14px;cursor:pointer;transition:all .15s;font-family:inherit;}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{background:var(--navy-3);}
+  .btn-outline{background:#fff;color:var(--blue);border:1px solid var(--blue);}
+  .btn-outline:hover{background:var(--blue-light);}
+  .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--line);}
+  .btn-ghost:hover{background:#f0f5fa;}
+  .btn-lg{padding:11px 26px;font-size:15px;border-radius:8px;}
+  /* ---------- 经营洞察 ---------- */
+  .insight{display:flex;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .insight:last-child{border-bottom:none;}
+  .insight .itag{flex:none;display:inline-block;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;margin-top:1px;}
+  .itag.focus{background:var(--blue-light);color:var(--navy-3);}
+  .itag.chance{background:var(--green-bg);color:var(--green);}
+  .itag.risk{background:var(--red-bg);color:var(--red);}
+  .insight .itext{font-size:13px;line-height:1.8;color:#33475c;}
+  /* ---------- 上传区 ---------- */
+  .drop{border:2px dashed #b9cfe4;border-radius:10px;padding:44px 20px;text-align:center;background:#fbfdff;transition:all .2s;cursor:pointer;}
+  .drop.over{border-color:var(--blue);background:var(--blue-light);}
+  .drop .big{font-size:16px;color:var(--navy);margin:10px 0 6px;}
+  .drop .tip{color:var(--muted);font-size:12px;}
+  .file-meta{margin-top:14px;font-size:13px;color:var(--green);display:none;}
+  /* ---------- 表格 ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{background:#f0f5fa;color:var(--navy);font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap;user-select:none;}
+  th.sortable{cursor:pointer;}
+  th.sortable:hover{background:#e4edf6;}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody tr:hover{background:#f7fafd;}
+  tbody tr.row-alert{background:var(--red-bg);}
+  tbody tr.row-alert:hover{background:#fbdcd7;}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+  .b-core{background:#fff7e0;color:#8a6d00;border:1px solid #e8cf6a;}
+  .b-keep{background:var(--blue-light);color:var(--navy-3);border:1px solid #b3cee8;}
+  .b-grow{background:var(--green-bg);color:var(--green);border:1px solid #a8d5b5;}
+  .b-normal{background:#eef1f5;color:#5b6b7c;border:1px solid #cfd8e2;}
+  .b-lost{background:var(--red-bg);color:var(--red);border:1px solid #f2b8b0;}
+  .b-risk-h{background:var(--red);color:#fff;}
+  .b-risk-m{background:var(--orange);color:#fff;}
+  .b-risk-l{background:#c7d3df;color:#40536a;}
+  .alert-tag{display:inline-block;margin-left:6px;padding:2px 8px;background:var(--red);color:#fff;border-radius:4px;font-size:11px;font-weight:700;}
+  /* ---------- 筛选栏 ---------- */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+  .toolbar input,.toolbar select{padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit;background:#fff;color:var(--text);}
+  .toolbar input:focus,.toolbar select:focus{outline:2px solid var(--blue);outline-offset:-1px;}
+  .toolbar input{width:200px;}
+  /* ---------- 提示 ---------- */
+  .empty{padding:50px 20px;text-align:center;color:var(--muted);}
+  .empty .icon{font-size:40px;margin-bottom:10px;}
+  .note{background:var(--blue-light);border-left:4px solid var(--blue);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:var(--navy-2);margin-bottom:16px;line-height:1.7;}
+  .warn{background:var(--red-bg);border-left:4px solid var(--red);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#8c1d13;margin-bottom:16px;line-height:1.7;}
+  /* ---------- 策略卡 ---------- */
+  .strategy{border:1px solid var(--line);border-radius:10px;padding:18px;background:#fff;}
+  .strategy h4{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .strategy ul{list-style:none;}
+  .strategy li{padding:6px 0 6px 20px;position:relative;color:#3c4f63;font-size:13px;line-height:1.6;}
+  .strategy li::before{content:"▸";position:absolute;left:2px;color:var(--blue);}
+  /* ---------- 人机协同 ---------- */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .vs .panel{border-radius:10px;padding:22px;}
+  .vs .ai{background:linear-gradient(160deg,#0e2a47,#1f4e79);color:#e6eff8;}
+  .vs .human{background:#fff;border:1px solid var(--line);}
+  .vs h4{font-size:16px;margin-bottom:14px;}
+  .vs .ai h4{color:#fff;}
+  .vs li{list-style:none;padding:7px 0 7px 24px;position:relative;font-size:13px;line-height:1.6;}
+  .vs .ai li::before{content:"🤖";position:absolute;left:0;}
+  .vs .human li::before{content:"👤";position:absolute;left:0;}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:8px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:99;display:none;max-width:80%;}
+  /* ---------- 打印（A4 管理报告） ---------- */
+  @media print{
+    body{background:#fff;}
+    .sidebar,.head-actions,.toast,#chartTip,.toolbar{display:none!important;}
+    .main{margin:0;padding:0;}
+    .page{display:none!important;}
+    #page-dashboard{display:block!important;animation:none;}
+    .card,.chart-card,.kpi{box-shadow:none;border:1px solid #d5dee8;page-break-inside:avoid;}
+    .kpi-row{grid-template-columns:repeat(4,1fr);}
+    .chart-grid{grid-template-columns:1fr 1fr!important;}
+    @page{size:A4;margin:12mm;}
+  }
+</style>
+</head>
+<body data-page-node-id="8gORAVE7yAAJMZXjnVuG2g">
+<div class="layout" data-page-node-id="6GsEUCzshUTuNIKOn2L2ht">
+  <aside class="sidebar" data-page-node-id="qJrYqCDmXlnhBKfPT56FHi">
+    <div class="brand" data-page-node-id="DgNjGzrMtQS9EbmXQ2k6wU">
+      <h1 data-page-node-id="rKZCvVX3fAbntEEeM7Ilia">客智分层</h1>
+      <p data-page-node-id="6j8EYx7hh3mLcqcDE0QmLg">AI客户价值识别与精准营销系统</p>
+    </div>
+    <nav class="nav" id="nav" data-page-node-id="1qtLdu8SzoBzURyj7abekV">
+      <a data-page="dashboard" class="active" data-page-node-id="EUFLtcL7doLR9tKiSSiaQf"><span class="ico" data-page-node-id="sOoFpihoDF568VUppfYQOr">📊</span>首页仪表盘</a>
+      <a data-page="import" data-page-node-id="k2XuZLNj6HN7HqQKxcmA2R"><span class="ico" data-page-node-id="BAqnzQdDFY87nIMEF74i7d">📥</span>客户数据导入</a>
+      <a data-page="rfm" data-page-node-id="bEVQnOt0L7QMBChcIEzIbE"><span class="ico" data-page-node-id="6a5suWZDtBJ1HsjxwjN8kJ">🧮</span>RFM客户分级</a>
+      <a data-page="analysis" data-page-node-id="zFpT8tKOaEaSMpGHzJdrrc"><span class="ico" data-page-node-id="XxmNXjbD6pi1Sjm2AKM9US">📋</span>客户价值分析</a>
+      <a data-page="top10" data-page-node-id="1lGDr2UIHFL3e2rCDC4k4q"><span class="ico" data-page-node-id="I73rOT4zXbU7BzdPUERovE">🏆</span>Top10重点客户</a>
+      <a data-page="risk" data-page-node-id="HiK3NskdNWFF0BjHzl00qH"><span class="ico" data-page-node-id="y6uwCkaxI6eZKRKAGXmvfj">🚨</span>流失风险预警</a>
+      <a data-page="strategy" data-page-node-id="k5cDni6cYCDdpigyraasxd"><span class="ico" data-page-node-id="Cjp9yHCT8RIUoDUzGgvBEQ">🎯</span>差异化营销策略</a>
+      <a data-page="collab" data-page-node-id="13uwUVjfKMA1iPFGKATPCr"><span class="ico" data-page-node-id="7X9Ol7WTLDdVF3pIHvp1Cj">🤝</span>人机协同</a>
+    </nav>
+    <div class="side-foot" data-page-node-id="woA7JCZvBaPzA2xue7QYPy">数据仅在浏览器本地处理<br data-page-node-id="uP62FmrXVPQJGe0PLAM8XX">不上传任何外部服务器</div>
+  </aside>
+
+  <main class="main" data-page-node-id="e9WOwRhYHKA4RjtV3SplXd">
+    <!-- 1. 仪表盘 -->
+    <section class="page active" id="page-dashboard" data-page-node-id="FH4LBI0cBBALE6rMAd164b">
+      <div class="page-head" data-page-node-id="fCMMfhxx0pdV8ch4sRQjNv">
+        <div data-page-node-id="aV3zDwaoGtZZYaahbibHL0"><h2 data-page-node-id="q3oOn0t8zuWbLoziRczPV8">首页仪表盘</h2><div class="sub" data-page-node-id="Jt8Lh8XwIpRla2HLSamhBx">经营数据驾驶舱 · 实时反映当前导入数据</div></div>
+        <div class="head-actions" data-page-node-id="qyCtdkMoGQnBFeiFqmrWC1">
+          <label class="date-label" data-page-node-id="D3A7iHfCD417BfFfXC31y8">分析基准日期 <input type="date" id="baseDateInput" data-page-node-id="XtSCq60sQKv7wTV1KcTqXk"></label>
+          <button class="btn btn-ghost" onclick="refreshAnalysis()" data-page-node-id="jvtbmVk7ozSqX4CUzlhA70">刷新分析</button>
+          <button class="btn btn-ghost" onclick="window.print()" data-page-node-id="0jhKESC6WJYEX8iO1ctfM8">打印 / 导出管理报告</button>
+          <button class="btn btn-ghost" onclick="loadDemo()" data-page-node-id="2ajxk4dIHSdORbrMTjuK1k">使用示例数据</button>
+          <button class="btn btn-primary" onclick="goPage('import')" data-page-node-id="hP1YzlUt4Ce4aoZPpYaEr8">上传客户数据</button>
+        </div>
+      </div>
+
+      <div class="kpi-row" data-page-node-id="7iWy5n664YQrmKUOyMGccI">
+        <div class="kpi k-navy" data-page-node-id="zn5yYVzJLlpA7RDzCTCJ0H"><div class="num" id="st-total" data-page-node-id="ksONa29bkRN6DBDZhLakWk">0</div><div class="lbl" data-page-node-id="iC9lnlzhN2cXDRFyfoMNih">客户总数</div><div class="sub" id="st-total-sub" data-page-node-id="fFVBUkunEFi1rocQKid8bI">等待导入数据</div></div>
+        <div class="kpi k-gold" data-page-node-id="3oyQVnBDGaO8b77bIcyO8F"><div class="num" id="st-amount" data-page-node-id="NQiY62E3G0ChX0iY6Yywkk">¥0</div><div class="lbl" data-page-node-id="7I3umsudfpYNzdppEEHifP">近12月累计消费金额</div><div class="sub" id="st-amount-sub" data-page-node-id="3cHA4iJgiNYe3FU7vBvFHe"></div></div>
+        <div class="kpi k-gold" data-page-node-id="DCNSrcqCe5qvwaSI64Pbla"><div class="num" id="st-core" data-page-node-id="KURGraTezs75YTpGFW6dbw">0</div><div class="lbl" data-page-node-id="rOwdpzAF6QihoBFyouksp8">核心价值客户</div><div class="sub" id="st-core-sub" data-page-node-id="ev5O8sAvEj8hIvCMOjHXoT"></div></div>
+        <div class="kpi k-green" data-page-node-id="VA0kmOa7X8MZWT6jZAbft1"><div class="num" id="st-grow" data-page-node-id="Gw3GteTayDGZWBOmeYn5bX">0</div><div class="lbl" data-page-node-id="ziD56O7zxzg1I5lpB9YeAz">潜力成长客户</div><div class="sub" id="st-grow-sub" data-page-node-id="Hbj2LorO0r1omnQtjgT3Z8"></div></div>
+        <div class="kpi" data-page-node-id="JyhRDn4slXHDjpE1CNxH3J"><div class="num" id="st-avg" data-page-node-id="zDYG8PDyawmykt9OOZGbsQ">—</div><div class="lbl" data-page-node-id="aYa08iwCcSFoIbSnqn2RHa">平均RFM综合得分</div><div class="sub" id="st-avg-sub" data-page-node-id="UWFFDNC2kGSc411SCsEDdG">满分 15 分</div></div>
+        <div class="kpi k-orange clickable" onclick="goPage('risk')" title="点击查看流失风险预警" data-page-node-id="BHak4sPbZHpcaaRpIKG3J8"><div class="num" id="st-lost" data-page-node-id="8xOgiJJkt1iICTK4LpK5g0">0</div><div class="lbl" data-page-node-id="mfja2BQp0atJWXtGdUYlkh">流失预警客户</div><div class="sub" id="st-lost-sub" data-page-node-id="9CElhAHXitP5Wxm5bIFjmh"></div></div>
+        <div class="kpi k-red clickable" onclick="goPage('risk')" title="点击查看流失风险预警" data-page-node-id="ljZRFjWXLESy3ZRqOAQQyN"><div class="num" id="st-hv" data-page-node-id="Rt7uFX3Svx4TufvszaNl6f">0</div><div class="lbl" data-page-node-id="MbPmriUsYHfLvekScKEIes">高价值流失风险客户</div><div class="sub" id="st-hv-sub" data-page-node-id="BOIp5fk7JFvihAaGx98EIK">建议人工复核</div></div>
+      </div>
+
+      <div class="chart-grid" data-page-node-id="n8HHNnt8K0RIN0NR9dlDwL">
+        <div class="chart-card" data-page-node-id="1HZGcw94xjZHB1P7Qg8WkV"><h3 data-page-node-id="jrM8VgeN9gx1f2fEiCBb6Z">客户等级分布<span class="h3-sub" data-page-node-id="STECNqvc9KeyTARv7ICDQ1">点击柱形可查看该等级客户明细</span></h3><div class="chart-wrap" data-page-node-id="QGCqGcCGfI4BeUdp0kWMZu"><canvas id="c-grade" data-page-node-id="lh4B9gTW4By3ObzFZicJyJ"></canvas></div></div>
+        <div class="chart-card" data-page-node-id="FVCIxBjEb7KKCmfY2tAtVE"><h3 data-page-node-id="Jt5Pj0iuL7nS1mRSDrCcFU">客户结构占比</h3><div class="chart-wrap" data-page-node-id="PeBmc8ZuQhZe3g6Ci15GYc"><canvas id="c-donut" data-page-node-id="TPTTylXKzRR9xhqjEUvpjr"></canvas></div></div>
+        <div class="chart-card" data-page-node-id="LC0fpvTM5FROeOjn7AFWEk"><h3 data-page-node-id="HzXYpBzXIheartKBAkKTPS">各等级平均RFM得分<span class="h3-sub" data-page-node-id="41L0ljrFxnbIrd4Lbv9Jth">Y轴固定 0–5 分</span></h3><div class="chart-wrap" data-page-node-id="ua0AZvbanbn9CvM377J3fC"><canvas id="c-avg" data-page-node-id="jQi6ZVGT0FgR5Pz3zhTard"></canvas></div></div>
+        <div class="chart-card" data-page-node-id="xXdMdA3wYHD9kc70jm4ySF"><h3 data-page-node-id="bRna0iT7GiqotirPGQl0GL">流失风险等级分布<span class="h3-sub" data-page-node-id="MuUwRdtDOTOpL1jCrUOcTi">占全部流失客户比例</span></h3><div class="chart-wrap" data-page-node-id="APtlZG3prtEQCir7Bt8DH2"><canvas id="c-risk" data-page-node-id="Dwp828QIzgpCQn4KNOIjid"></canvas></div></div>
+      </div>
+
+      <div class="chart-grid" data-page-node-id="oDB0gSDj9mQ7yZPCklpEhV">
+        <div class="chart-card" data-page-node-id="EIbZes33vIcGf9r36iqxoG"><h3 data-page-node-id="V9vL20SKHUUdNZoK5Qac9q">各客户等级消费金额贡献<span class="h3-sub" data-page-node-id="NpdGUR3jAMfZsWDydoW0H0">近12月累计消费金额</span></h3><div class="chart-wrap" data-page-node-id="VPbWZ3OQkoVLQcnr0kGzAy"><canvas id="c-amount" data-page-node-id="FLemYtcGGCghvDxwwbvPfh"></canvas></div></div>
+        <div class="chart-card" data-page-node-id="Ro723Wfu1EKcpiUHNjIC4s"><h3 data-page-node-id="2zoCMRJuFXccGcMJZxkawg">RFM客户分布散点图<span class="h3-sub" data-page-node-id="kyiM7doHUkjEboGGlThdpl">X=消费次数 · Y=累计金额</span></h3><div class="chart-wrap" data-page-node-id="w0oL8kdXCHQK2BELsenPe8"><canvas id="c-scatter" data-page-node-id="gQxnUSqlRJvE2f7nzHrFF4"></canvas></div></div>
+      </div>
+
+      <div class="card" data-page-node-id="UIHa51OLKWT3r56dOQGdzc">
+        <h3 data-page-node-id="bDRlqsq1TTxDtfA1GsKcM5">AI 经营洞察<span class="h3-sub" data-page-node-id="bWMoEmayuFfHqMVXhjBzCI">基于当前数据规则化自动生成 · 不连接外部接口</span></h3>
+        <div id="insights" data-page-node-id="V7eubS33m0POrYquUKF8Y1"></div>
+      </div>
+    </section>
+
+    <!-- 2. 数据导入 -->
+    <section class="page" id="page-import" data-page-node-id="YaZTJbUKLArg5ICEN5v2X0">
+      <div class="page-head" data-page-node-id="TKZEQByTowJuYmQPFvG3Ub"><div data-page-node-id="1WHTTKDYavgtc6TFvSznzm"><h2 data-page-node-id="tLkILv95sL6KCXVivzG7lc">客户数据导入</h2><div class="sub" data-page-node-id="hVIekbdwQAqBqmNh1pg5oF">全部数据在浏览器本地解析处理，不上传外部服务器</div></div></div>
+      <div class="note" data-page-node-id="mlkShh3VhRmwSAAjKl2wUB">CSV 文件需包含以下列（表头名称可略有差异，系统会自动识别）：<b data-page-node-id="Y5C02O0AkLm4GWP9IDrvAj">客户编号、最近消费日期、近12月消费次数、近12月累计消费金额</b>。日期支持 2025-08-01 / 2025/8/1 等常见格式。也可先点击「使用示例数据」体验完整功能。</div>
+      <div class="card" data-page-node-id="ryRxEGovMyrt2Fd55S1KPm">
+        <div class="drop" id="drop" data-page-node-id="JebYgQP2RHYIEYRm7oTjQU">
+          <div style="font-size:38px;" data-page-node-id="Z2OsVVwsa0MJobJ7CrzTGn">📂</div>
+          <div class="big" data-page-node-id="krUI7eioaPQOCsYERJoS7i">点击选择或拖拽 CSV 文件到此处</div>
+          <div class="tip" data-page-node-id="JIQAceAG4ZCMFh9WC6snZG">仅支持 .csv 文件 · UTF-8 编码（Excel 导出请选择 CSV UTF-8）</div>
+          <input type="file" id="fileInput" accept=".csv" style="display:none" data-page-node-id="UiHj5iz55NfkM4bkNi9OP2">
+        </div>
+        <div class="file-meta" id="fileMeta" data-page-node-id="0GFpTnFC3aDK4xzUkbeh8h"></div>
+        <div style="margin-top:18px;display:flex;gap:10px;" data-page-node-id="GKCAJWVTEbJ4KwNUnPK2eG">
+          <button class="btn btn-ghost" onclick="loadDemo()" data-page-node-id="XAH71BDXB03e6LgKF95x0c">使用示例数据</button>
+          <button class="btn btn-outline" onclick="downloadTemplate()" data-page-node-id="wZFHLaJNHfCbEu0o0jfqGf">下载CSV模板</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:18px;display:none" id="previewCard" data-page-node-id="6eyyJ5YBZZ1csvt57higz0">
+        <h3 data-page-node-id="a7OconjKmAd2IhhOhqelus">数据预览（前 8 行）</h3>
+        <div style="overflow-x:auto;" data-page-node-id="CRtKjO71rWp88APgrQXcAf"><table id="previewTable" data-page-node-id="mbkBfPaNy3Hl5mG0sXEkoJ"></table></div>
+      </div>
+    </section>
+
+    <!-- 3. RFM分级 -->
+    <section class="page" id="page-rfm" data-page-node-id="dFwvXRRJZVngO6NSae0PNQ">
+      <div class="page-head" data-page-node-id="JgGFIvRVmduxz4nwlAEOgs"><div data-page-node-id="ZV4gk5zo2hanR7VmGEXH03"><h2 data-page-node-id="VzygOXS5XjmX5E58jHfzrt">RFM 客户分级规则</h2><div class="sub" data-page-node-id="nDUEYoHC9AEO7A4AYMIss2">系统自动评分与分级 · 规则如下</div></div></div>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);" data-page-node-id="R0OuplqCMJBeBEVwS1zeQZ">
+        <div class="card" data-page-node-id="PdsCSNYoSnHBTHK7Bnj89F"><h3 data-page-node-id="oAxyCesqPNGOtAKaBQyBAr">R 评分 · 最近消费</h3><table data-page-node-id="dyBS23fsmAOJHC3Jl3ukDI"><tr data-page-node-id="lJAhyze29FEcocSWpEQDkA"><th data-page-node-id="Zl5J1Vzc0IUbktdLB2tzDZ">距今天数</th><th data-page-node-id="O3wjdSsGTh8QWxzp0wvAmv">得分</th></tr>
+          <tr data-page-node-id="s5ZFTPPrJ9jkR85UiND7AB"><td data-page-node-id="DBXNYFkNHZrqPtOFtK4RPk">0 - 30 天</td><td data-page-node-id="JYkloCJvMocKKSeZlitG0M">5</td></tr><tr data-page-node-id="6rEOgrXHYEGmFBbGKI78Ed"><td data-page-node-id="v7fpa1vcOIzF208ZREFw9I">31 - 60 天</td><td data-page-node-id="t5aWDtl26SEouXpaAPrFRZ">4</td></tr>
+          <tr data-page-node-id="MDK6gRg0sCKBfv0PvPCeNk"><td data-page-node-id="aQauCMhGshx3kqPDQ4bfDS">61 - 120 天</td><td data-page-node-id="0LkFuIWlnwVmULrbo7AlRv">3</td></tr><tr data-page-node-id="GMphGE3HR9oxqsVctHAd5W"><td data-page-node-id="Gmlg1yviritf8KmpGXvOVz">121 - 180 天</td><td data-page-node-id="SllA7AmqfblOMzqxUIKIKf">2</td></tr>
+          <tr data-page-node-id="DZmC9IAIEfhXktw53qniTk"><td data-page-node-id="E6Sdj1lnEuXcWgCpcV2PBO">181 天及以上</td><td data-page-node-id="WpCelP3iYmQYCdfhAa07a3">1</td></tr></table></div>
+        <div class="card" data-page-node-id="hKrcKhZTqX7aauxNdsxf8R"><h3 data-page-node-id="k4TYycHhdgcGhukzKAX9up">F 评分 · 消费频次</h3><table data-page-node-id="D0mzI46AT9wqDuPvf1MPIj"><tr data-page-node-id="yMNHKhelrfdEM955MKeCjw"><th data-page-node-id="pQvLG0f4931t6RpldkFVbW">近12月次数</th><th data-page-node-id="uJinRqUiPnRxI3Chp6kIBi">得分</th></tr>
+          <tr data-page-node-id="KbZEtxPqEBC5Bbsl2Y9fpb"><td data-page-node-id="r150lBFyFNROPhbWHUlTO4">≥ 20 次</td><td data-page-node-id="1AJjByXFfoU8nUZOTc21LC">5</td></tr><tr data-page-node-id="To208HiWaiRTvBjvGGtvMj"><td data-page-node-id="GTSDMlc8uOGoTaGZl2mFjW">12 - 19 次</td><td data-page-node-id="zEjKyS1WUtU3rNF1eFD0uE">4</td></tr>
+          <tr data-page-node-id="EXVyQ8hEr85R0EIBbtc4ee"><td data-page-node-id="x5wvcfrMCnNSYxXHGAC8zi">6 - 11 次</td><td data-page-node-id="8saVH1EJypoUszNzIGPWzn">3</td></tr><tr data-page-node-id="oLIPGlYZFGTDZglnpnzgHK"><td data-page-node-id="97pxS4nY3KYYwG54BAI1Z8">3 - 5 次</td><td data-page-node-id="Yb1IgKmvSJ9nXjvN5Vweic">2</td></tr>
+          <tr data-page-node-id="c9RDaACURpfHSDmAMgxTzI"><td data-page-node-id="orEwizqMR6gARAILuKBQFG">1 - 2 次</td><td data-page-node-id="HL071W7cWLAgRVgsju22vz">1</td></tr></table></div>
+        <div class="card" data-page-node-id="TYOKGNBrMVCQGiSgHDyioH"><h3 data-page-node-id="ACgzVyEXRpr4UGVdOF6A69">M 评分 · 消费金额</h3><table data-page-node-id="XUPg69Dprv5mbCN6c5Alsi"><tr data-page-node-id="QHSQr56JbB9qtoEO6AkUYY"><th data-page-node-id="cxrg6GlnWM2HMPGofzY2DS">近12月累计</th><th data-page-node-id="Ii1ZrodvrhKJD4QPZ4sPrw">得分</th></tr>
+          <tr data-page-node-id="FjkzSd13MIpBYxuCbQBqY8"><td data-page-node-id="kIZwS7eug4j61g0FWzER9e">≥ 8000 元</td><td data-page-node-id="qXWSebARfeddj1Umkph3Gt">5</td></tr><tr data-page-node-id="jIGAY9xjQbIaeNvMMhAqH4"><td data-page-node-id="5cWoGGJzIAajYq0MduVZHY">4000 - 7999 元</td><td data-page-node-id="9l0S6qH1pCCox1yRe00HVb">4</td></tr>
+          <tr data-page-node-id="lHA69WLwZiERFvpdCA5t8S"><td data-page-node-id="IjmAdbfTqeVptLtbEoYXIW">2000 - 3999 元</td><td data-page-node-id="TdRS6y0oXRoDjxM4mMCHHC">3</td></tr><tr data-page-node-id="e5UreFyJkyukvkzV4FQCwJ"><td data-page-node-id="UFVgGEVCJdZfK9B0uNDsKW">800 - 1999 元</td><td data-page-node-id="S7OEzO0GtieSw11c1yC5eP">2</td></tr>
+          <tr data-page-node-id="QjbDtkG8Zc1NssedpurfWH"><td data-page-node-id="XME7J5VQPsIMVlxEXhjib8">＜ 800 元</td><td data-page-node-id="lFudkMYnEOw5JeCP7ECvFw">1</td></tr></table></div>
+      </div>
+      <div class="card" style="margin-top:18px;" data-page-node-id="7TsLKSclJRB0kL1Dipi5v1"><h3 data-page-node-id="QTW854QdwSDKpyXRX7wiEV">客户分级判定规则（按优先级依次判定）</h3>
+        <table data-page-node-id="DsYnPDVRpnqXnzBDQS0ZMk"><tr data-page-node-id="kNBbNGWmD0UMhLADYzkLIB"><th data-page-node-id="GyRIb3kASM4ejxvHJa1sYf">客户等级</th><th data-page-node-id="iTrXFcFGAYT8iPW4hjrYNC">判定条件</th><th data-page-node-id="oF97Jw1Hc8YJJI4Y7Vopb7">说明</th></tr>
+          <tr data-page-node-id="VKzJRZVDaTftmZgAzMgA08"><td data-page-node-id="NtNUELYVuaVLVw7WgPEf1g"><span class="badge b-lost" data-page-node-id="Di48pkoCEuTVy21OkM6bE0">流失预警客户</span></td><td data-page-node-id="CHM8rRa0cFmiKkuovxwBcn">R ≤ 2</td><td data-page-node-id="IW5aX5TMY11O9gvHIY34DE">超过120天未消费，最优先识别</td></tr>
+          <tr data-page-node-id="bcjWd50DhNgDf00ptbEwkS"><td data-page-node-id="titPbxFPI1cLLo8lm0mNpc"><span class="badge b-core" data-page-node-id="4e40Ot7jOha8coyVMmX8IR">核心价值客户</span></td><td data-page-node-id="fHOtdYR57NozW36wAjFaYs">R ≥ 4 且 F ≥ 4 且 M ≥ 4</td><td data-page-node-id="dQhj8DjUOh0zRcr6ZZYMac">最近活跃、高频、高消费</td></tr>
+          <tr data-page-node-id="sNAhZOuZGOb7HmNSTJ9H1S"><td data-page-node-id="ilgDDZDiE1IxwmIlC3iPDG"><span class="badge b-keep" data-page-node-id="mLOvUzUN9c7G3uVMG4b8Gt">重要保持客户</span></td><td data-page-node-id="DyZRwExKoSWRnJQ3vzVjoj">R = 3 且 F ≥ 4 且 M ≥ 4</td><td data-page-node-id="2lsSrKtBfCzq5ZMkd5C6kv">价值高但当前最近消费间隔相对较长</td></tr>
+          <tr data-page-node-id="j82JME2w3zyWTHksLoDIOK"><td data-page-node-id="67rLWoQs2WGCGxNOyQkHvk"><span class="badge b-grow" data-page-node-id="ipFabEcGYM5N9DGAypBTMN">潜力成长客户</span></td><td data-page-node-id="WD8vl5WGv4SW60qotrQPGv">R ≥ 4 且（F ≥ 3 或 M ≥ 3），且未满足核心价值</td><td data-page-node-id="nNclKF0yBWVaycsfAAYGKo">近期活跃，频次或金额有成长空间</td></tr>
+          <tr data-page-node-id="inFowg6u4s8CRGcEZGXygT"><td data-page-node-id="lALMhzLmG9oFofZV5zbcVW"><span class="badge b-normal" data-page-node-id="GkRMM6MXTpOuXNsjCjDEFE">一般维护客户</span></td><td data-page-node-id="EKWkFdJSDbzpASppkSlxfi">R ≥ 3 且未满足以上条件</td><td data-page-node-id="4YrDR0dJTRPbhvsyvDvzms">保持常规触达</td></tr></table>
+        <div class="note" style="margin-top:14px;margin-bottom:0;" data-page-node-id="pev6tYg29U4sLYeZBigVK8">当前已加载 <b id="rfm-count" data-page-node-id="FLSpUrfWuVOmJ1itYGyT9l">0</b> 位客户，均已按上述规则完成自动分级，可在「客户价值分析」中查看明细。R 值以首页「分析基准日期」为准计算。</div>
+      </div>
+    </section>
+
+    <!-- 4. 价值分析 -->
+    <section class="page" id="page-analysis" data-page-node-id="v6ZOVgdnOuZHzjQRCGcAQN">
+      <div class="page-head" data-page-node-id="puB5ELCFZ4wBOqtiJmqkqo">
+        <div data-page-node-id="ZrEAb2XqWjdExAOZQb9J01"><h2 data-page-node-id="oTS3mlYklB2COG7JkJcsD6">客户价值分析</h2><div class="sub" data-page-node-id="LgreeqQsegO3ctm9gUoCUl">全部客户 RFM 评分明细 · 支持搜索、筛选与排序</div></div>
+        <button class="btn btn-outline" onclick="exportCSV()" data-page-node-id="MwIT1Un6BK2uYrlB6Y4YBj">导出分析结果CSV</button>
+      </div>
+      <div class="card" data-page-node-id="V922GuDgmT5qKQ9B1W8ZF6">
+        <div class="toolbar" data-page-node-id="kb8kSyHrHMpqoGsBeV4e4B">
+          <input id="q" placeholder="搜索客户编号…" oninput="renderTable()" data-page-node-id="3tQsuCQh17iDYcyyQNblGt">
+          <select id="fGrade" onchange="renderTable()" data-page-node-id="7rC2GNFaPqynTJjCQpalio"><option value="" data-page-node-id="yg7GcTXqeGUzyNbvlXMqCD">全部客户等级</option></select>
+          <select id="fRisk" onchange="renderTable()" data-page-node-id="UCHMOm2AcG9aBdDmBTFjVT"><option value="" data-page-node-id="XZRHAaAZLIVTjonbhIrQbu">全部风险等级</option></select>
+          <span style="color:var(--muted);font-size:13px;" id="tblCount" data-page-node-id="jvbb2JE6B6tKoi2z7qBVXL"></span>
+        </div>
+        <div style="overflow-x:auto;" data-page-node-id="CEQS4QfRI1UujubZQ5D1Y4"><table id="mainTable" data-page-node-id="FShFmEvvGrmNajaD9WER1G"></table></div>
+      </div>
+    </section>
+
+    <!-- 5. Top10 -->
+    <section class="page" id="page-top10" data-page-node-id="TMvCJD2C8k1ezQKNww11La">
+      <div class="page-head" data-page-node-id="0WWjSSgiZseAuAj2BVqaZV">
+        <div data-page-node-id="SyeyrL5OJhStUTb3eMjfWj"><h2 data-page-node-id="GFR11AJgLRjyofVgGgP8qG">Top 10 重点客户</h2><div class="sub" data-page-node-id="96KkPyiJmvrdjlUBqN00KG">等级优先 → RFM总分 → M评分 → 累计金额 → 消费次数</div></div>
+        <button class="btn btn-outline" onclick="exportCSV()" data-page-node-id="HWeVBSfe23FOyALrXhcrBm">导出分析结果CSV</button>
+      </div>
+      <div class="card" data-page-node-id="C637zAPm6h0FlshgjjP3sM"><div style="overflow-x:auto;" data-page-node-id="I1UHk0EdiviRvSWfpgSHOZ"><table id="topTable" data-page-node-id="fYlY3gfTSOGenCmRDVofw6"></table></div></div>
+    </section>
+
+    <!-- 6. 流失预警 -->
+    <section class="page" id="page-risk" data-page-node-id="oE38UZ9VAeJPqybyg7xC4o">
+      <div class="page-head" data-page-node-id="vinGDDPTPlO7BWAA6nYiyj"><div data-page-node-id="Xjd952KYt8KTGME2ZFRopQ"><h2 data-page-node-id="a8eByK06LY7oN4G17bYZB0">流失风险预警</h2><div class="sub" data-page-node-id="g0ES8asoDgQIo5iu9Dquox">自动识别 R ≤ 2 客户，按价值划分风险等级</div></div></div>
+      <div class="warn" data-page-node-id="zMZ6kSDJwWycsC5qmGLGOL">⚠️ <b data-page-node-id="8YScCdYDPfwUiclPrhlpp9">高价值流失风险客户</b>（R ≤ 2 且 M ≥ 4）已用红色高亮标记，系统建议 <b data-page-node-id="n2XaHJvbKfRofxlTghYXr2">CRM 人员人工复核</b> 后执行召回，AI 不自动触发重大权益动作。</div>
+      <div class="stat-row" style="grid-template-columns:repeat(3,1fr);max-width:720px;" data-page-node-id="MmDbrG7kAAtMIe1oUqyaFO">
+        <div class="stat s-red" data-page-node-id="qzYPRYfr1nppRfyoLoSmAY"><div class="num" id="rk-h" data-page-node-id="nT82wJxx5xfn78w0H1qksr">0</div><div class="lbl" data-page-node-id="HKN2KMXPoc6650SOO3L0hk">高价值流失风险（M≥4）</div></div>
+        <div class="stat s-orange" data-page-node-id="SN8b2CzhInwCGvXn600Dcw"><div class="num" id="rk-m" data-page-node-id="fIgY0HQHwFkt0QV7o5WXuF">0</div><div class="lbl" data-page-node-id="Zbt2dkiAiaaYbO18qfnkFy">中等价值流失（M=3）</div></div>
+        <div class="stat" data-page-node-id="1xSJrMTDOtWbdmhvL0QrKL"><div class="num" id="rk-l" data-page-node-id="MN5EChrtSViF2dTsFhXnI1">0</div><div class="lbl" data-page-node-id="6hl8HZJ6j5vMdJLT7Rt5Ry">普通流失（M≤2）</div></div>
+      </div>
+      <div class="card" data-page-node-id="HzzvD31UFGnrFYta9VXwsB"><div style="overflow-x:auto;" data-page-node-id="xY3puqbtr0kETsg8oOOBPK"><table id="riskTable" data-page-node-id="Cy1438I19dzbl4EWwuJerC"></table></div></div>
+    </section>
+
+    <!-- 7. 营销策略 -->
+    <section class="page" id="page-strategy" data-page-node-id="f9cvpRvZcYkwvmse1QvE57">
+      <div class="page-head" data-page-node-id="kFvpHF4FH2ElG1Mvhkidrh"><div data-page-node-id="nGRExKBnSK84CoXNIBGkLB"><h2 data-page-node-id="kBBkotioeB6snHXtkr8UAh">差异化营销策略</h2><div class="sub" data-page-node-id="JkMNJb4Dml5bNKjo0NGoZG">AI 根据客户等级自动生成策略与文案建议</div></div></div>
+      <div class="note">策略严谨性说明：以下策略仅基于当前已导入的客户数据可直接支持的结论生成；凡需额外业务数据或企业制度支撑的策略，均以「若后续接入……可……」条件式表述，不假设企业已具备相应会员制度或数据。</div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;" id="strategyGrid" data-page-node-id="BSQ3EQWWMnSR1cqoxlA5IF"></div>
+    </section>
+
+    <!-- 8. 人机协同 -->
+    <section class="page" id="page-collab" data-page-node-id="pOlvqRUxOqc5FjgUUjeYS4">
+      <div class="page-head" data-page-node-id="9uClqonprVfQjQIJxULweG"><div data-page-node-id="4hfoG9KuRWxsfGapkxwVYb"><h2 data-page-node-id="SmjukEwZoCOP7HnpjJKlJK">人机协同分工</h2><div class="sub" data-page-node-id="gA9NuqW6YyBnM2yKD0zDl0">AI 增强人，而不替代人的关键决策</div></div></div>
+      <div class="vs" data-page-node-id="ywOSPvEwU9cDxT29IQSTUv">
+        <div class="panel ai" data-page-node-id="r0u42TQqIvBn9LGB9AYkq0">
+          <h4 data-page-node-id="fFkFbOFEejyVFCaaMll4od">🤖 AI 负责（系统自动完成）</h4>
+          <ul data-page-node-id="nVvGcQZw6BN6QDLYRVNNRd">
+            <li data-page-node-id="JCWE9KWABWrgUguvccZlb0">客户数据清洗、解析与 RFM 自动评分</li>
+            <li data-page-node-id="X0QZnMuiJ0GREZnnyvriOf">客户价值分层与结构可视化分析</li>
+            <li data-page-node-id="ukyN7ACFLYCEJTR8l0kXEK">流失风险自动识别与分级预警</li>
+            <li data-page-node-id="dIGG3pihThAd39GsaoQ37n">差异化营销策略与触达文案生成</li>
+            <li data-page-node-id="Z408ghInEW9G0EcaLupiD8">Top 重点客户自动排序与推荐</li>
+          </ul>
+        </div>
+        <div class="panel human" data-page-node-id="pEqsMCgOQXibtlPkTVeOvl">
+          <h4 data-page-node-id="1UwvZZciecJJ57Zd85HCWm">👤 CRM 人员负责（人类决策）</h4>
+          <ul data-page-node-id="OnOBugBSMaQqEjFFvvh1od">
+            <li data-page-node-id="vsGDKFNNaWeQUk4ODQVchn">重大权益调整与 VIP 政策审批</li>
+            <li data-page-node-id="fgPKfIJp7RnXbHJsUekrLc">高价值流失客户的逐一人工复核</li>
+            <li data-page-node-id="W17ZEMNCuJAwBXGuef7a40">客户投诉与情感沟通处理</li>
+            <li data-page-node-id="r3R0KOCZgvqOd85S0WYuoW">敏感个人信息与隐私数据管理</li>
+            <li data-page-node-id="u4jDl4ados3BXtgUDMTUqQ">超出 AI 权限范围的业务决策</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note" style="margin-top:18px;" data-page-node-id="MpguUYV3eA9dEucFcxTLji">协同原则：AI 处理<b data-page-node-id="mcIzRxFYTatnTP7QA2ZAA9">规模化、规则化</b>的分析工作，人负责<b data-page-node-id="l22pzuTEJh0P2PbVaeePqF">高价值、高敏感、高情感</b>的决策环节。系统所有预警仅作建议，最终动作由 CRM 人员确认执行。</div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" data-page-node-id="iMHfosUUItpIqruIA9FitE"></div>
+<div id="chartTip" data-page-node-id="8XPiPUhXyM3Vu3WkM3rRGv"></div>
+
+<script>
+"use strict";
+/* ==PURE-BEGIN== */
+/* ---------- 纯逻辑层（无 DOM 依赖，可独立测试） ---------- */
+var GRADES = ["核心价值客户","重要保持客户","潜力成长客户","一般维护客户","流失预警客户"];
+var GRADE_BADGE = {"核心价值客户":"b-core","重要保持客户":"b-keep","潜力成长客户":"b-grow","一般维护客户":"b-normal","流失预警客户":"b-lost"};
+var GRADE_COLOR = {"核心价值客户":"#b8860b","重要保持客户":"#2f6fb2","潜力成长客户":"#1e8e3e","一般维护客户":"#8496a9","流失预警客户":"#d93025"};
+
+function parseDate(s){
+  if(s==null) return null;
+  s = String(s).trim();
+  var m = s.match(/^(\d{4})[-\/\.年](\d{1,2})[-\/\.月](\d{1,2})/);
+  if(m) return new Date(+m[1], +m[2]-1, +m[3]);
+  var d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+function rScore(days){
+  if(days<=30) return 5;
+  if(days<=60) return 4;
+  if(days<=120) return 3;
+  if(days<=180) return 2;
+  return 1;
+}
+function fScore(f){
+  if(f>=20) return 5;
+  if(f>=12) return 4;
+  if(f>=6) return 3;
+  if(f>=3) return 2;
+  return 1;
+}
+function mScore(m){
+  if(m>=8000) return 5;
+  if(m>=4000) return 4;
+  if(m>=2000) return 3;
+  if(m>=800) return 2;
+  return 1;
+}
+function classify(R,F,M){
+  if(R<=2) return "流失预警客户";
+  if(R>=4 && F>=4 && M>=4) return "核心价值客户";
+  if(R===3 && F>=4 && M>=4) return "重要保持客户";
+  if(R>=4 && (F>=3 || M>=3)) return "潜力成长客户";
+  return "一般维护客户";
+}
+/* 风险等级：流失客户按 M 分三级；未流失客户按活跃度分低/中 */
+function riskOf(R,F,M,grade){
+  if(R<=2){
+    if(M>=4) return {level:"高价值流失风险", cls:"b-risk-h", review:true};
+    if(M===3) return {level:"中等价值流失", cls:"b-risk-m", review:false};
+    return {level:"普通流失", cls:"b-risk-l", review:false};
+  }
+  if(R===3) return {level:"中风险", cls:"b-risk-m", review:false};
+  return {level:"低风险", cls:"b-risk-l", review:false};
+}
+var ADVICE = {
+  "核心价值客户":"可提供更高等级会员权益或 VIP 权益建议，以及新品优先体验与专属活动邀约，保持高频互动。",
+  "重要保持客户":"当前最近消费间隔相对较长，建议定向召回、推送专属优惠，由客户经理主动关怀。",
+  "潜力成长客户":"当前活跃度相对较高，具有成长潜力；若后续接入商品购买明细，可进一步开展关联商品推荐和交叉销售；可设计会员成长任务，重点培养消费频次或客单价。",
+  "一般维护客户":"建议保持周期性触达，投放轻优惠与内容运营，控制营销成本。",
+  "流失预警客户":"建议生成召回方案、触达文案和问卷模板；具体发送和执行由企业 CRM 系统或人工完成。"
+};
+function analyzeCustomer(rec, today){
+  var d = parseDate(rec.date);
+  var days = d ? Math.max(0, Math.floor((today - d)/86400000)) : 9999;
+  var R = rScore(days), F = fScore(rec.freq), M = mScore(rec.amount);
+  var grade = classify(R,F,M);
+  var risk = riskOf(R,F,M,grade);
+  return { id:rec.id, date:rec.date, days:days, freq:rec.freq, amount:rec.amount,
+           R:R, F:F, M:M, total:R+F+M, grade:grade,
+           risk:risk.level, riskCls:risk.cls, review:risk.review,
+           advice:ADVICE[grade] };
+}
+/* Top10 排序：等级优先 → 总分 → M → 金额 → 次数 */
+function top10(list){
+  var rank = {}; GRADES.forEach(function(g,i){ rank[g]=i; });
+  return list.slice().sort(function(a,b){
+    if(rank[a.grade]!==rank[b.grade]) return rank[a.grade]-rank[b.grade];
+    if(b.total!==a.total) return b.total-a.total;
+    if(b.M!==a.M) return b.M-a.M;
+    if(b.amount!==a.amount) return b.amount-a.amount;
+    return b.freq-a.freq;
+  }).slice(0,10);
+}
+/* 简易 CSV 解析（支持引号包裹、逗号、换行） */
+function parseCSV(text){
+  text = text.replace(/^﻿/,""); /* strip BOM */
+  var rows=[], row=[], cur="", inQ=false;
+  for(var i=0;i<text.length;i++){
+    var c=text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else inQ=false; }
+      else cur+=c;
+    }else{
+      if(c==='"') inQ=true;
+      else if(c===','){ row.push(cur); cur=""; }
+      else if(c==='\n'||c==='\r'){
+        if(c==='\r'&&text[i+1]==='\n') i++;
+        row.push(cur); cur="";
+        if(row.some(function(v){return v.trim()!=="";})) rows.push(row);
+        row=[];
+      } else cur+=c;
+    }
+  }
+  row.push(cur);
+  if(row.some(function(v){return v.trim()!=="";})) rows.push(row);
+  return rows;
+}
+/* 表头映射：自动识别常见写法 */
+function mapHeaders(head){
+  var map={id:-1,date:-1,freq:-1,amount:-1};
+  head.forEach(function(h,i){
+    h=String(h).trim();
+    if(/编号|ID|id|客户号|客户编码/.test(h)&&map.id<0) map.id=i;
+    else if(/日期|时间|最近消费/.test(h)&&map.date<0) map.date=i;
+    else if(/次数|频次|频率|F/.test(h)&&map.freq<0) map.freq=i;
+    else if(/金额|消费额|累计|M/.test(h)&&map.amount<0) map.amount=i;
+  });
+  return map;
+}
+function rowsToCustomers(rows){
+  if(rows.length<2) throw new Error("CSV 内容为空或缺少数据行");
+  var map = mapHeaders(rows[0]);
+  if(map.date<0||map.freq<0||map.amount<0)
+    throw new Error("未识别到必需列：最近消费日期 / 近12月消费次数 / 近12月累计消费金额");
+  var out=[], errs=0;
+  for(var i=1;i<rows.length;i++){
+    var r=rows[i];
+    var freq=parseFloat(String(r[map.freq]||"").replace(/[^\d.\-]/g,""));
+    var amount=parseFloat(String(r[map.amount]||"").replace(/[^\d.\-]/g,""));
+    var d=parseDate(r[map.date]);
+    if(!d||isNaN(freq)||isNaN(amount)){ errs++; continue; }
+    out.push({ id: map.id>=0&&r[map.id] ? String(r[map.id]).trim() : "C"+String(i).padStart(4,"0"),
+               date:String(r[map.date]).trim(), freq:freq, amount:amount });
+  }
+  if(out.length===0) throw new Error("没有可解析的有效数据行，请检查日期与数字格式");
+  return {customers:out, skipped:errs};
+}
+/* ==PURE-END== */
+
+/* ================= UI 层 ================= */
+var RAW = [];        /* 原始客户记录 */
+var DATA = [];       /* 分析后的客户 */
+var TODAY = new Date(); TODAY.setHours(0,0,0,0);
+var baseDate = dateStr(TODAY);   /* 分析基准日期，默认当天 */
+var sortKey="total", sortDir=-1;
+
+function dateStr(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function toast(msg, ok){
+  var t=document.getElementById("toast");
+  t.textContent=msg; t.style.background = ok===false ? "#d93025" : "#0e2a47";
+  t.style.display="block";
+  clearTimeout(t._tm); t._tm=setTimeout(function(){t.style.display="none";},3200);
+}
+function debounce(fn,ms){ var tm; return function(){ clearTimeout(tm); tm=setTimeout(fn,ms); }; }
+/* ---------- 导航 ---------- */
+function goPage(name){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll("#nav a").forEach(function(a){a.classList.remove("active");});
+  document.getElementById("page-"+name).classList.add("active");
+  document.querySelector('#nav a[data-page="'+name+'"]').classList.add("active");
+  if(name==="dashboard") drawCharts();
+}
+document.querySelectorAll("#nav a").forEach(function(a){
+  a.addEventListener("click",function(){goPage(a.dataset.page);});
+});
+/* ---------- 数据装载与基准日期 ---------- */
+function recomputeData(){
+  var base = parseDate(baseDate) || TODAY;
+  DATA = RAW.map(function(c){ return analyzeCustomer(c, base); });
+}
+function setData(customers, sourceLabel){
+  RAW = customers;
+  recomputeData();
+  refreshAll();
+  toast(sourceLabel + "：已加载 " + DATA.length + " 位客户，全部分析已更新");
+}
+function refreshAnalysis(){
+  recomputeData();
+  refreshAll();
+  toast("已按基准日期 " + baseDate + " 重新计算全部分析结果");
+}
+function onBaseDateChange(v){
+  if(!v){ document.getElementById("baseDateInput").value = baseDate; return; }
+  var d = parseDate(v);
+  if(!d){ toast("日期格式无效，已恢复原基准日期", false); document.getElementById("baseDateInput").value = baseDate; return; }
+  if(RAW.length){
+    var maxD = null;
+    RAW.forEach(function(c){ var cd = parseDate(c.date); if(cd && (!maxD || cd > maxD)) maxD = cd; });
+    if(maxD && d < maxD){
+      toast("分析基准日期不能早于客户最近消费日期（" + dateStr(maxD) + "），已恢复原日期", false);
+      document.getElementById("baseDateInput").value = baseDate;
+      return;
+    }
+  }
+  baseDate = v;
+  refreshAnalysis();
+}
+function refreshAll(){
+  renderStats(); renderTable(); renderTop10(); renderRisk(); renderStrategies(); renderInsights();
+  document.getElementById("rfm-count").textContent = DATA.length;
+  if(document.getElementById("page-dashboard").classList.contains("active")) drawCharts();
+}
+/* ---------- KPI 指标 ---------- */
+function gradeCount(g){ return DATA.filter(function(c){return c.grade===g;}).length; }
+function totalAmount(){ return DATA.reduce(function(a,c){return a+c.amount;},0); }
+function money(n){ return "¥" + Math.round(n).toLocaleString("zh-CN"); }
+function moneyWan(n){ return n>=10000 ? (n/10000).toFixed(1)+"万" : Math.round(n).toLocaleString("zh-CN"); }
+function pct(n){ return DATA.length ? "占比 "+(n/DATA.length*100).toFixed(1)+"%" : "占比 —"; }
+function renderStats(){
+  var hv = DATA.filter(function(c){return c.review;}).length;
+  var avg = DATA.length ? DATA.reduce(function(a,c){return a+c.total;},0)/DATA.length : 0;
+  document.getElementById("st-total").textContent = DATA.length;
+  document.getElementById("st-total-sub").textContent = DATA.length ? "基准日期 " + baseDate : "等待导入数据";
+  document.getElementById("st-amount").textContent = money(totalAmount());
+  document.getElementById("st-amount-sub").textContent = DATA.length ? "人均 " + money(totalAmount()/DATA.length) : "";
+  var vals = {core:gradeCount("核心价值客户"), grow:gradeCount("潜力成长客户"), lost:gradeCount("流失预警客户"), hv:hv};
+  for(var k in vals){
+    document.getElementById("st-"+k).textContent = vals[k];
+    var sub = document.getElementById("st-"+k+"-sub");
+    if(sub && k!=="hv") sub.textContent = pct(vals[k]);
+  }
+  document.getElementById("st-hv-sub").textContent = hv>0 ? pct(hv)+" · 建议人工复核" : "建议人工复核";
+  document.getElementById("st-avg").innerHTML = DATA.length ? avg.toFixed(1)+"<small> / 15</small>" : "—";
+}
+/* ---------- AI 经营洞察（纯规则计算，不连外部接口） ---------- */
+function renderInsights(){
+  var box = document.getElementById("insights");
+  if(DATA.length===0){
+    box.innerHTML = '<div class="empty" style="padding:26px 20px;">暂无数据。导入客户 CSV 或使用示例数据后，系统将自动生成经营洞察。</div>';
+    return;
+  }
+  var n = DATA.length, amt = totalAmount();
+  var core = gradeCount("核心价值客户"), grow = gradeCount("潜力成长客户"),
+      lost = gradeCount("流失预警客户"), hv = DATA.filter(function(c){return c.review;}).length;
+  /* 各等级金额贡献 */
+  var amtBy = {};
+  GRADES.forEach(function(g){ amtBy[g]=0; });
+  DATA.forEach(function(c){ amtBy[c.grade]+=c.amount; });
+  var topG = GRADES[0];
+  GRADES.forEach(function(g){ if(amtBy[g] > amtBy[topG]) topG = g; });
+  var keep = gradeCount("重要保持客户");
+  var items = [];
+  items.push({tag:"focus", label:"重点关注", text:"当前共有 <b>"+n+"</b> 名客户，其中核心价值客户 <b>"+core+"</b> 名（占 "+(core/n*100).toFixed(1)+"%），近12月累计消费金额 <b>"+money(amt)+"</b>，人均 "+money(amt/n)+"。"});
+  if(lost>0){
+    var lp = lost/n*100;
+    items.push({tag:"risk", label:"风险预警", text:"流失预警客户 <b>"+lost+"</b> 名，占比 "+lp.toFixed(1)+"%"+(lp>=25?"，占比偏高，建议优先生成召回方案":"，建议持续跟进召回")+"。"});
+  }
+  if(hv>0){
+    items.push({tag:"risk", label:"风险预警", text:"<b>"+hv+"</b> 名高价值流失风险客户（历史累计消费较高）建议转 CRM 人员人工复核后执行召回，AI 不自动触发重大权益动作。"});
+  }
+  items.push({tag:"chance", label:"经营机会", text:"「"+topG+"」贡献的累计消费金额最高，达 <b>"+money(amtBy[topG])+"</b>（占总金额 "+(amt?amtBy[topG]/amt*100:0).toFixed(1)+"%），是当前营收的核心来源，应重点维护。"});
+  if(grow>0){
+    items.push({tag:"chance", label:"经营机会", text:"潜力成长客户 <b>"+grow+"</b> 名，当前活跃度相对较高但消费深度不足，最值得通过会员成长任务重点培养；若后续接入商品购买明细，可进一步开展交叉销售。"});
+  } else if(keep>0){
+    items.push({tag:"focus", label:"重点关注", text:"重要保持客户 <b>"+keep+"</b> 名，价值高但当前最近消费间隔相对较长，建议客户经理主动关怀、定向召回。"});
+  }
+  box.innerHTML = items.slice(0,5).map(function(it){
+    return '<div class="insight"><span class="itag '+it.tag+'">'+it.label+'</span><div class="itext">'+it.text+'</div></div>';
+  }).join("");
+}
+/* ================= 响应式图表引擎 ================= */
+var CHART_IDS = ["c-grade","c-donut","c-avg","c-risk","c-amount","c-scatter"];
+var AXIS = "#8aa0b5", GRID = "#edf2f7", TXT = "#1c2b3a", MUT = "#6b7d90";
+
+function fitCanvas(id){
+  var cv = document.getElementById(id);
+  var wrap = cv.parentElement;
+  var w = wrap.clientWidth, h = wrap.clientHeight;
+  var dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+  var ctx = cv.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+  cv._hits = [];
+  return {ctx:ctx, w:w, h:h, cv:cv};
+}
+function drawEmptyChart(c, msg){
+  c.ctx.strokeStyle = "#dbe4ee"; c.ctx.setLineDash([6,6]); c.ctx.lineWidth = 1.5;
+  var bw=140, bh=90, x=(c.w-bw)/2, y=(c.h-bh)/2-14;
+  c.ctx.strokeRect(x,y,bw,bh);
+  c.ctx.setLineDash([]);
+  c.ctx.strokeStyle = "#c3d2e2";
+  c.ctx.beginPath(); c.ctx.moveTo(x+24,y+bh-20); c.ctx.lineTo(x+56,y+52); c.ctx.lineTo(x+82,y+64); c.ctx.lineTo(x+bw-22,y+26); c.ctx.stroke();
+  c.ctx.fillStyle = AXIS; c.ctx.textAlign = "center";
+  c.ctx.fillText(msg || "暂无数据，请先导入客户数据", c.w/2, y+bh+30);
+  c.ctx.textAlign = "left";
+}
+function niceMax(v){
+  if(v<=0) return 5;
+  var mag = Math.pow(10, Math.floor(Math.log10(v)));
+  var n = v/mag;
+  var nice = n<=1?1 : n<=1.2?1.2 : n<=1.5?1.5 : n<=2?2 : n<=2.5?2.5 : n<=3?3 : n<=4?4 : n<=5?5 : n<=6?6 : n<=8?8 : 10;
+  return nice*mag;
+}
+/* Tooltip */
+function showTip(html,x,y){
+  var t=document.getElementById("chartTip");
+  t.innerHTML=html; t.style.display="block";
+  var tw=t.offsetWidth, th=t.offsetHeight;
+  var px=x+14, py=y+14;
+  if(px+tw>window.innerWidth-8) px=x-tw-14;
+  if(py+th>window.innerHeight-8) py=y-th-14;
+  t.style.left=px+"px"; t.style.top=py+"px";
+}
+function hideTip(){ document.getElementById("chartTip").style.display="none"; }
+function attachChartEvents(cv){
+  cv.addEventListener("mousemove",function(e){
+    var r=cv.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+    var hit=null;
+    for(var i=0;i<(cv._hits||[]).length;i++){
+      var h=cv._hits[i];
+      if(h.test(x,y)){ hit=h; break; }
+    }
+    cv._hover = hit;
+    if(hit){ showTip(hit.html, e.clientX, e.clientY); cv.style.cursor = hit.action ? "pointer" : "default"; }
+    else { hideTip(); cv.style.cursor = "default"; }
+  });
+  cv.addEventListener("mouseleave",function(){ hideTip(); cv._hover=null; });
+  cv.addEventListener("click",function(){
+    if(cv._hover && cv._hover.action) handleChartAction(cv._hover.action);
+  });
+}
+function handleChartAction(act){
+  if(act.type==="grade"){
+    document.getElementById("fGrade").value = act.value;
+    renderTable();
+    goPage("analysis");
+    toast("已筛选「"+act.value+"」，共 "+document.querySelectorAll("#mainTable tbody tr").length+" 条记录");
+  }
+}
+/* ---------- ① 客户等级分布（柱状图） ---------- */
+function drawGradeBar(){
+  var c = fitCanvas("c-grade"), ctx = c.ctx;
+  if(DATA.length===0){ drawEmptyChart(c); return; }
+  var counts = GRADES.map(gradeCount);
+  var padL=44, padR=14, padT=24, padB=42;
+  var iw=c.w-padL-padR, ih=c.h-padT-padB;
+  var yMax = niceMax(Math.max.apply(null,counts));
+  var ticks = 5;
+  ctx.textAlign = "right"; ctx.fillStyle = AXIS; ctx.font = '11px sans-serif';
+  for(var i=0;i<=ticks;i++){
+    var v = yMax*i/ticks, y = padT+ih-ih*i/ticks;
+    ctx.strokeStyle = GRID; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(c.w-padR,y); ctx.stroke();
+    ctx.fillText(Math.round(v), padL-8, y+4);
+  }
+  ctx.textAlign = "left";
+  var slot = iw/GRADES.length, bw = Math.min(52, slot*0.52);
+  for(var g=0; g<GRADES.length; g++){
+    var val = counts[g];
+    var bh = val/yMax*ih;
+    var x = padL + slot*g + (slot-bw)/2, y2 = padT+ih-bh;
+    ctx.fillStyle = GRADE_COLOR[GRADES[g]];
+    if(val>0){
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x,y2,bw,Math.max(bh,3),[5,5,0,0]); else ctx.rect(x,y2,bw,Math.max(bh,3));
+      ctx.fill();
+    }
+    ctx.fillStyle = TXT; ctx.textAlign = "center"; ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(val, x+bw/2, (val>0?y2:padT+ih)-7);
+    ctx.font = '12px sans-serif'; ctx.fillStyle = MUT;
+    var name = GRADES[g].replace("客户","");
+    if(slot>=86){ ctx.fillText(GRADES[g], padL+slot*g+slot/2, padT+ih+20); }
+    else { ctx.fillText(name, padL+slot*g+slot/2, padT+ih+18); ctx.fillText("客户", padL+slot*g+slot/2, padT+ih+32); }
+    ctx.textAlign = "left";
+    var grade = GRADES[g];
+    (function(grade,val){
+      c.cv._hits.push({ x:padL+slot*g, y:padT, w:slot, h:ih,
+        test:function(px,py){ return px>=this.x && px<=this.x+this.w && py>=this.y && py<=this.y+this.h; },
+        html:"<b>"+grade+"</b><br>人数："+val+" 人<br>占全部客户："+(val/DATA.length*100).toFixed(1)+"%",
+        action:{type:"grade", value:grade} });
+    })(grade,val);
+  }
+  ctx.strokeStyle = "#d5dee8"; ctx.beginPath(); ctx.moveTo(padL,padT+ih); ctx.lineTo(c.w-padR,padT+ih); ctx.stroke();
+}
+/* ---------- ② 客户结构占比（环形图） ---------- */
+function drawDonut(){
+  var c = fitCanvas("c-donut"), ctx = c.ctx;
+  var counts = GRADES.map(gradeCount);
+  var total = counts.reduce(function(a,b){return a+b;},0);
+  if(total===0){ drawEmptyChart(c); return; }
+  var sideLegend = c.w >= 470;
+  var R, cx, cy, legX, legY, legW;
+  if(sideLegend){
+    R = Math.min(c.h/2-26, 108);
+    cx = 24 + R; cy = c.h/2;
+    legX = cx + R + 34; legW = c.w - legX - 12; legY = cy - GRADES.length*15 + 4;
+  }else{
+    R = Math.min(c.h/2-56, 96);
+    cx = c.w/2; cy = 18 + R;
+    legX = Math.max(12, c.w/2-170); legW = 340; legY = cy + R + 22;
+  }
+  var r0 = R*0.62, start = -Math.PI/2;
+  for(var i=0;i<GRADES.length;i++){
+    if(counts[i]===0) continue;
+    var ang = counts[i]/total*Math.PI*2;
+    var a0 = start, a1 = start+ang;
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,a0,a1); ctx.arc(cx,cy,r0,a1,a0,true); ctx.closePath();
+    ctx.fillStyle = GRADE_COLOR[GRADES[i]]; ctx.fill();
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
+    var p = counts[i]/total;
+    if(p>0.06){
+      var mid=(a0+a1)/2;
+      ctx.fillStyle="#fff"; ctx.textAlign="center"; ctx.font='bold 11px sans-serif';
+      ctx.fillText((p*100).toFixed(0)+"%", cx+Math.cos(mid)*(r0+(R-r0)/2), cy+Math.sin(mid)*(r0+(R-r0)/2)+4);
+      ctx.font='12px sans-serif'; ctx.textAlign="left";
+    }
+    (function(grade,val,a0,a1){
+      c.cv._hits.push({
+        test:function(px,py){
+          var dx=px-cx, dy=py-cy, d=Math.sqrt(dx*dx+dy*dy);
+          if(d<r0 || d>R) return false;
+          var a=Math.atan2(dy,dx); if(a<-Math.PI/2) a+=Math.PI*2;
+          return a>=a0 && a<=a1;
+        },
+        html:"<b>"+grade+"</b><br>人数："+val+" 人<br>占全部客户："+(val/total*100).toFixed(1)+"%" });
+    })(GRADES[i],counts[i],a0,a1);
+    start += ang;
+  }
+  /* 中心文字 */
+  ctx.textAlign="center";
+  ctx.fillStyle=MUT; ctx.font='12px sans-serif';
+  ctx.fillText("客户总数", cx, cy-8);
+  ctx.fillStyle="#0e2a47"; ctx.font='bold 22px sans-serif';
+  ctx.fillText(total+" 人", cx, cy+16);
+  ctx.textAlign="left"; ctx.font='12px sans-serif';
+  /* 图例（含 0 人类别） */
+  var perRow = sideLegend ? 1 : 2, rowH = 26, colW = sideLegend ? legW : 170;
+  for(var j=0;j<GRADES.length;j++){
+    var col = j%perRow, row = Math.floor(j/perRow);
+    var lx = legX + col*colW, ly = legY + row*rowH + 8;
+    ctx.fillStyle = GRADE_COLOR[GRADES[j]];
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(lx,ly-5,10,10,2); else ctx.rect(lx,ly-5,10,10);
+    ctx.fill();
+    ctx.fillStyle = "#3c4f63";
+    var label = GRADES[j];
+    ctx.fillText(label, lx+16, ly+4);
+    var stat = counts[j]+" 人 · "+(counts[j]/total*100).toFixed(1)+"%";
+    var lw = ctx.measureText(label).width;
+    ctx.fillStyle = AXIS;
+    ctx.fillText(stat, lx+16+lw+10, ly+4);
+  }
+}
+/* ---------- ③ 各等级平均RFM得分（分组柱状图，Y轴 0–5） ---------- */
+function drawAvgRFM(){
+  var c = fitCanvas("c-avg"), ctx = c.ctx;
+  if(DATA.length===0){ drawEmptyChart(c); return; }
+  /* 图例 */
+  var series = [["R 评分","#2f6fb2"],["F 评分","#1e8e3e"],["M 评分","#b8860b"]];
+  var legX = c.w - 200;
+  for(var s=0;s<3;s++){
+    ctx.fillStyle = series[s][1]; ctx.fillRect(legX+s*66, 4, 10, 10);
+    ctx.fillStyle = "#3c4f63"; ctx.font='11px sans-serif';
+    ctx.fillText(series[s][0], legX+s*66+14, 13);
+  }
+  var padL=38, padR=14, padT=30, padB=42;
+  var iw=c.w-padL-padR, ih=c.h-padT-padB;
+  ctx.textAlign="right"; ctx.font='11px sans-serif';
+  for(var t=0;t<=5;t++){
+    var y = padT+ih-ih*t/5;
+    ctx.strokeStyle = GRID; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(c.w-padR,y); ctx.stroke();
+    ctx.fillStyle = AXIS; ctx.fillText(t, padL-8, y+4);
+  }
+  ctx.textAlign="left";
+  var slot = iw/GRADES.length, bw = Math.min(16, slot*0.18), gapB = 4;
+  for(var g=0; g<GRADES.length; g++){
+    var sub = DATA.filter(function(x){return x.grade===GRADES[g];});
+    var groupW = bw*3+gapB*2, gx = padL+slot*g+(slot-groupW)/2;
+    for(var k=0;k<3;k++){
+      var avg = sub.length ? sub.reduce(function(a,x){return a+x["RFM"[k]];},0)/sub.length : 0;
+      var bh = avg/5*ih, x = gx+k*(bw+gapB), y2 = padT+ih-bh;
+      ctx.fillStyle = series[k][1];
+      ctx.fillRect(x, y2, bw, Math.max(bh, sub.length?1.5:0));
+      (function(grade,sname,val){
+        c.cv._hits.push({ test:function(px,py){ return px>=x-2 && px<=x+bw+2 && py>=padT && py<=padT+ih; },
+          html:"<b>"+grade+"</b><br>"+sname+"平均值："+val.toFixed(2)+" 分" });
+      })(GRADES[g], series[k][0], avg);
+    }
+    ctx.fillStyle = MUT; ctx.textAlign="center"; ctx.font='12px sans-serif';
+    var name = GRADES[g].replace("客户","");
+    if(slot>=86) ctx.fillText(GRADES[g], padL+slot*g+slot/2, padT+ih+20);
+    else { ctx.fillText(name, padL+slot*g+slot/2, padT+ih+18); ctx.fillText("客户", padL+slot*g+slot/2, padT+ih+32); }
+    ctx.textAlign="left";
+  }
+  ctx.strokeStyle = "#d5dee8"; ctx.beginPath(); ctx.moveTo(padL,padT+ih); ctx.lineTo(c.w-padR,padT+ih); ctx.stroke();
+}
+/* ---------- 横向条形图通用 ---------- */
+function drawHBars(id, rows, emptyMsg){
+  var c = fitCanvas(id), ctx = c.ctx;
+  var allZero = rows.every(function(r){return r.value===0;});
+  if(DATA.length===0 || allZero){ drawEmptyChart(c, emptyMsg); return; }
+  var maxV = Math.max.apply(null, rows.map(function(r){return r.value;}));
+  var padL=118, padR=120, padT=16, padB=12;
+  var iw = c.w-padL-padR;
+  var rowH = (c.h-padT-padB)/rows.length, bh = Math.min(24, rowH*0.4);
+  for(var i=0;i<rows.length;i++){
+    var r = rows[i];
+    var cy = padT + rowH*i + rowH/2;
+    ctx.fillStyle = "#3c4f63"; ctx.textAlign="right"; ctx.font='12px sans-serif';
+    ctx.fillText(r.label, padL-12, cy+4);
+    ctx.textAlign="left";
+    /* 背景槽 */
+    ctx.fillStyle = "#f0f4f8";
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(padL, cy-bh/2, iw, bh, bh/2); else ctx.rect(padL, cy-bh/2, iw, bh);
+    ctx.fill();
+    /* 数值条 */
+    var bw = r.value/maxV*iw;
+    if(r.value>0){
+      ctx.fillStyle = r.color;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(padL, cy-bh/2, Math.max(bw,6), bh, bh/2); else ctx.rect(padL, cy-bh/2, Math.max(bw,6), bh);
+      ctx.fill();
+    }
+    /* 数值文本 */
+    ctx.fillStyle = "#3c4f63"; ctx.font='bold 12px sans-serif';
+    ctx.fillText(r.text, padL+Math.max(bw,0)+10, cy+4);
+    ctx.font='12px sans-serif';
+    (function(row){
+      c.cv._hits.push({ test:function(px,py){ return px>=padL && px<=padL+iw && py>=cy-rowH/2 && py<=cy+rowH/2; },
+        html:row.tip });
+    })(r);
+  }
+}
+/* ---------- ④ 流失风险等级分布（横向条形） ---------- */
+function drawRiskBars(){
+  var lost = DATA.filter(function(x){return x.R<=2;});
+  var total = lost.length;
+  var cats = [
+    {label:"高价值流失风险", color:"#d9534f", n:lost.filter(function(x){return x.M>=4;}).length},
+    {label:"中等价值流失", color:"#e8710a", n:lost.filter(function(x){return x.M===3;}).length},
+    {label:"普通流失", color:"#8496a9", n:lost.filter(function(x){return x.M<=2;}).length}
+  ];
+  drawHBars("c-risk", cats.map(function(k){
+    return { label:k.label, color:k.color, value:k.n,
+      text:k.n+" 人 · "+(total?k.n/total*100:0).toFixed(1)+"%",
+      tip:"<b>"+k.label+"</b><br>人数："+k.n+" 人<br>占全部流失客户："+(total?k.n/total*100:0).toFixed(1)+"%" };
+  }), "当前无流失预警客户");
+}
+/* ---------- ⑤ 各客户等级消费金额贡献（横向条形） ---------- */
+function drawAmountBars(){
+  var amtBy = {}; GRADES.forEach(function(g){ amtBy[g]=0; });
+  DATA.forEach(function(x){ amtBy[x.grade]+=x.amount; });
+  var total = totalAmount();
+  drawHBars("c-amount", GRADES.map(function(g){
+    return { label:g, color:GRADE_COLOR[g], value:amtBy[g],
+      text:money(amtBy[g])+" · "+(total?amtBy[g]/total*100:0).toFixed(1)+"%",
+      tip:"<b>"+g+"</b><br>累计消费金额："+money(amtBy[g])+"<br>占总金额："+(total?amtBy[g]/total*100:0).toFixed(1)+"%<br>人数："+gradeCount(g)+" 人" };
+  }), "暂无金额数据");
+}
+/* ---------- ⑥ RFM 客户分布散点图 ---------- */
+function drawScatter(){
+  var c = fitCanvas("c-scatter"), ctx = c.ctx;
+  if(DATA.length===0){ drawEmptyChart(c); return; }
+  var padL=64, padR=20, padT=26, padB=44;
+  var iw=c.w-padL-padR, ih=c.h-padT-padB;
+  var xMax = niceMax(Math.max.apply(null, DATA.map(function(x){return x.freq;})));
+  var yMax = niceMax(Math.max.apply(null, DATA.map(function(x){return x.amount;})));
+  /* 网格与刻度 */
+  ctx.font='11px sans-serif';
+  var i, v, x, y;
+  for(i=0;i<=5;i++){
+    v = yMax*i/5; y = padT+ih-ih*i/5;
+    ctx.strokeStyle = GRID; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(c.w-padR,y); ctx.stroke();
+    ctx.fillStyle = AXIS; ctx.textAlign="right";
+    ctx.fillText(moneyWan(v), padL-8, y+4);
+  }
+  for(i=0;i<=5;i++){
+    v = xMax*i/5; x = padL+iw*i/5;
+    ctx.strokeStyle = GRID; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ih); ctx.stroke();
+    ctx.fillStyle = AXIS; ctx.textAlign="center";
+    ctx.fillText(Math.round(v), x, padT+ih+16);
+  }
+  ctx.textAlign="left";
+  /* 轴标题 */
+  ctx.fillStyle = MUT; ctx.font='11px sans-serif';
+  ctx.textAlign="center";
+  ctx.fillText("近12月消费次数（次）", padL+iw/2, c.h-6);
+  ctx.save(); ctx.translate(12, padT+ih/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText("累计消费金额", 0, 0); ctx.restore();
+  ctx.textAlign="left";
+  /* 图例 */
+  var legX = c.w - 104, legY = 8;
+  ctx.font='11px sans-serif';
+  for(var l=0;l<GRADES.length;l++){
+    ctx.fillStyle = GRADE_COLOR[GRADES[l]];
+    ctx.beginPath(); ctx.arc(legX+4, legY+l*16+4, 4, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#3c4f63";
+    ctx.fillText(GRADES[l].replace("客户",""), legX+13, legY+l*16+8);
+  }
+  /* 数据点 */
+  for(var p=0;p<DATA.length;p++){
+    var d = DATA[p];
+    var px = padL + d.freq/xMax*iw, py = padT + ih*(1-d.amount/yMax);
+    ctx.fillStyle = GRADE_COLOR[d.grade];
+    ctx.globalAlpha = 0.82;
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.stroke();
+    (function(cust,cx,cy){
+      c.cv._hits.push({ test:function(qx,qy){ var dx=qx-cx, dy=qy-cy; return dx*dx+dy*dy<=100; },
+        html:"<b>"+esc(cust.id)+"</b> · "+cust.grade+"<br>消费次数："+cust.freq+" 次<br>累计金额："+money(cust.amount)+"<br>R / F / M 评分："+cust.R+" / "+cust.F+" / "+cust.M });
+    })(d,px,py);
+  }
+  ctx.strokeStyle = "#d5dee8";
+  ctx.beginPath(); ctx.moveTo(padL,padT+ih); ctx.lineTo(c.w-padR,padT+ih); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+ih); ctx.stroke();
+}
+/* ---------- 统一绘制入口 + 防抖重绘 ---------- */
+function drawCharts(){
+  drawGradeBar(); drawDonut(); drawAvgRFM(); drawRiskBars(); drawAmountBars(); drawScatter();
+}
+var redrawDebounced = debounce(function(){
+  if(document.getElementById("page-dashboard").classList.contains("active")) drawCharts();
+}, 160);
+window.addEventListener("resize", redrawDebounced);
+var _ro = null;
+if(typeof ResizeObserver !== "undefined"){
+  _ro = new ResizeObserver(redrawDebounced);
+  document.querySelectorAll(".chart-wrap").forEach(function(w){ _ro.observe(w); });
+}
+/* ---------- 客户价值分析表 ---------- */
+function initFilters(){
+  var g=document.getElementById("fGrade"), r=document.getElementById("fRisk");
+  g.innerHTML='<option value="">全部客户等级</option>'+GRADES.map(function(x){return '<option>'+x+'</option>';}).join("");
+  var risks=["高价值流失风险","中等价值流失","普通流失","中风险","低风险"];
+  r.innerHTML='<option value="">全部风险等级</option>'+risks.map(function(x){return '<option>'+x+'</option>';}).join("");
+}
+initFilters();
+function badge(c){
+  var s='<span class="badge '+GRADE_BADGE[c.grade]+'">'+c.grade+'</span>';
+  if(c.review) s+='<span class="alert-tag">建议人工复核</span>';
+  return s;
+}
+function renderTable(){
+  var q=document.getElementById("q").value.trim().toLowerCase();
+  var fg=document.getElementById("fGrade").value, fr=document.getElementById("fRisk").value;
+  var rows=DATA.filter(function(c){
+    return (!q||c.id.toLowerCase().indexOf(q)>=0)&&(!fg||c.grade===fg)&&(!fr||c.risk===fr);
+  });
+  rows.sort(function(a,b){
+    var va=a[sortKey],vb=b[sortKey];
+    if(typeof va==="string") return va.localeCompare(vb,"zh")*sortDir;
+    return (va-vb)*sortDir;
+  });
+  document.getElementById("tblCount").textContent="共 "+rows.length+" 条记录（点击表头可排序）";
+  var cols=[["id","客户编号"],["days","距今天数"],["freq","消费次数"],["amount","累计金额"],["R","R"],["F","F"],["M","M"],["total","RFM总分"],["grade","客户等级"],["risk","风险等级"]];
+  var html="<thead><tr>"+cols.map(function(c){
+    var arrow=sortKey===c[0]?(sortDir===1?" ▲":" ▼"):"";
+    return '<th class="sortable" data-k="'+c[0]+'">'+c[1]+arrow+'</th>';
+  }).join("")+"<th>运营建议</th></tr></thead><tbody>";
+  if(rows.length===0) html+='<tr><td colspan="11"><div class="empty"><div class="icon">🗂️</div>暂无数据，请先在「客户数据导入」上传 CSV 或使用示例数据</div></td></tr>';
+  rows.forEach(function(c){
+    html+='<tr class="'+(c.review?"row-alert":"")+'"><td><b>'+esc(c.id)+'</b></td><td>'+c.days+'</td><td>'+c.freq+'</td><td>¥'+fmt(c.amount)+'</td><td>'+c.R+'</td><td>'+c.F+'</td><td>'+c.M+'</td><td><b>'+c.total+'</b></td><td>'+badge(c)+'</td><td><span class="badge '+c.riskCls+'">'+c.risk+'</span></td><td style="white-space:normal;min-width:220px;">'+c.advice+'</td></tr>';
+  });
+  html+="</tbody>";
+  var t=document.getElementById("mainTable"); t.innerHTML=html;
+  t.querySelectorAll("th.sortable").forEach(function(th){
+    th.addEventListener("click",function(){
+      var k=th.dataset.k;
+      if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=-1; }
+      renderTable();
+    });
+  });
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function fmt(n){return Number(n).toLocaleString("zh-CN",{maximumFractionDigits:2});}
+/* ---------- Top10 ---------- */
+function renderTop10(){
+  var list=top10(DATA);
+  var html="<thead><tr><th>排名</th><th>客户编号</th><th>客户等级</th><th>R</th><th>F</th><th>M</th><th>RFM总分</th><th>消费次数</th><th>累计金额</th><th>维护建议</th></tr></thead><tbody>";
+  if(list.length===0) html+='<tr><td colspan="10"><div class="empty"><div class="icon">🏆</div>暂无数据</div></td></tr>';
+  var medals=["🥇","🥈","🥉"];
+  list.forEach(function(c,i){
+    html+="<tr><td style='font-size:16px;'>"+(medals[i]||(i+1))+"</td><td><b>"+esc(c.id)+"</b></td><td>"+badge(c)+"</td><td>"+c.R+"</td><td>"+c.F+"</td><td>"+c.M+"</td><td><b>"+c.total+"</b></td><td>"+c.freq+"</td><td>¥"+fmt(c.amount)+"</td><td style='white-space:normal;min-width:200px;'>"+c.advice+"</td></tr>";
+  });
+  document.getElementById("topTable").innerHTML=html+"</tbody>";
+}
+/* ---------- 流失预警 ---------- */
+function renderRisk(){
+  var lost=DATA.filter(function(c){return c.R<=2;}).sort(function(a,b){return b.amount-a.amount;});
+  document.getElementById("rk-h").textContent=lost.filter(function(c){return c.M>=4;}).length;
+  document.getElementById("rk-m").textContent=lost.filter(function(c){return c.M===3;}).length;
+  document.getElementById("rk-l").textContent=lost.filter(function(c){return c.M<=2;}).length;
+  var html="<thead><tr><th>客户编号</th><th>最近消费日期</th><th>距今(天)</th><th>消费次数</th><th>累计金额</th><th>R/F/M</th><th>流失风险等级</th><th>处置建议</th></tr></thead><tbody>";
+  if(lost.length===0) html+='<tr><td colspan="8"><div class="empty"><div class="icon">✅</div>当前无流失预警客户（或未导入数据）</div></td></tr>';
+  lost.forEach(function(c){
+    html+='<tr class="'+(c.review?"row-alert":"")+'"><td><b>'+esc(c.id)+"</b>"+(c.review?'<span class="alert-tag">建议CRM人员人工复核</span>':"")+"</td><td>"+esc(c.date)+"</td><td>"+c.days+"</td><td>"+c.freq+"</td><td>¥"+fmt(c.amount)+"</td><td>"+c.R+" / "+c.F+" / "+c.M+'</td><td><span class="badge '+c.riskCls+'">'+c.risk+"</span></td><td style='white-space:normal;min-width:220px;'>"+c.advice+"</td></tr>";
+  });
+  document.getElementById("riskTable").innerHTML=html+"</tbody>";
+}
+/* ---------- 营销策略 ---------- */
+var STRATEGIES=[
+  {g:"核心价值客户",icon:"👑",color:"#b8860b",items:["提供更高等级会员权益或 VIP 权益建议（具体权益以企业现行会员制度为准）","可考虑提供新品优先体验权益，增强高价值客户的尊享感","可策划会员专属活动或闭门交流活动，保持高频互动","建议由客户经理定期回访，维持长期信任关系"]},
+  {g:"重要保持客户",icon:"🛡️",color:"#2f6fb2",items:["当前最近消费间隔相对较长，建议开展定向召回触达（短信/企微/邮件），具体发送由企业 CRM 系统或人工完成","可提供回流专属优惠建议，激励客户再次消费","建议由客户经理主动关怀，了解客户需求变化","若企业 CRM 中具备积分/权益数据，可进行到期提醒，激活消费动机"]},
+  {g:"潜力成长客户",icon:"🌱",color:"#1e8e3e",items:["若后续接入商品购买明细，可进一步开展关联商品推荐与交叉销售","可设计会员成长任务（如累计消费达标升级），引导提升消费频次或客单价","若企业具备会员等级制度，可向客户展示距离升级的差额与对应权益","可提供阶梯式优惠激励，促进再次消费转化"]},
+  {g:"一般维护客户",icon:"📮",color:"#8496a9",items:["保持周期性触达（如每月 1–2 次内容推送），维持品牌曝光","可提供小额轻优惠，控制营销成本","以使用技巧、案例分享等内容运营维持客户关注度","在促销节点集中唤醒，并观察转化效果"]},
+  {g:"流失预警客户",icon:"🚨",color:"#d93025",items:["建议生成多轮递进式召回方案与触达文案（如短信→企微→电话），具体发送和执行由企业 CRM 系统或人工完成","可生成简短问卷模板（如「是什么让您暂时离开？」）用于了解流失原因","若企业 CRM 中具备余额/积分/权益数据，可发送即将失效提醒文案","高价值流失客户须人工复核后由 CRM 人员介入"]}
+];
+function renderStrategies(){
+  var grid=document.getElementById("strategyGrid");
+  grid.innerHTML=STRATEGIES.map(function(s){
+    var n=gradeCount(s.g);
+    return '<div class="strategy"><h4><span style="font-size:20px;">'+s.icon+'</span><span style="color:'+s.color+'">'+s.g+'</span><span class="badge '+GRADE_BADGE[s.g]+'" style="margin-left:auto;">'+n+' 人</span></h4><ul>'+s.items.map(function(i){return "<li>"+i+"</li>";}).join("")+"</ul></div>";
+  }).join("");
+}
+/* ---------- CSV 上传 ---------- */
+var drop=document.getElementById("drop"), fileInput=document.getElementById("fileInput");
+drop.addEventListener("click",function(){fileInput.click();});
+drop.addEventListener("dragover",function(e){e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",function(){drop.classList.remove("over");});
+drop.addEventListener("drop",function(e){
+  e.preventDefault(); drop.classList.remove("over");
+  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener("change",function(){ if(fileInput.files.length) handleFile(fileInput.files[0]); });
+function handleFile(file){
+  if(!/\.csv$/i.test(file.name)){ toast("请选择 .csv 文件", false); return; }
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var rows=parseCSV(reader.result);
+      var res=rowsToCustomers(rows);
+      setData(res.customers, "文件「"+file.name+"」");
+      var meta=document.getElementById("fileMeta");
+      meta.style.display="block";
+      meta.textContent="✔ 已解析 "+res.customers.length+" 条有效记录"+(res.skipped?"，跳过 "+res.skipped+" 条格式异常记录":"")+"，分析结果已全部刷新。";
+      renderPreview(rows);
+    }catch(err){ toast("解析失败："+err.message, false); }
+  };
+  reader.readAsText(file,"UTF-8");
+}
+function renderPreview(rows){
+  var head=rows[0], body=rows.slice(1,9);
+  var html="<thead><tr>"+head.map(function(h){return "<th>"+esc(h)+"</th>";}).join("")+"</tr></thead><tbody>";
+  body.forEach(function(r){ html+="<tr>"+head.map(function(_,i){return "<td>"+esc(r[i]||"")+"</td>";}).join("")+"</tr>"; });
+  document.getElementById("previewTable").innerHTML=html+"</tbody>";
+  document.getElementById("previewCard").style.display="block";
+}
+/* ---------- 导出 ---------- */
+function exportCSV(){
+  if(DATA.length===0){ toast("暂无数据可导出", false); return; }
+  var head=["客户编号","最近消费日期","距今天数","近12月消费次数","近12月累计消费金额","R评分","F评分","M评分","RFM总分","客户等级","风险等级","需人工复核","运营建议"];
+  var lines=[head.join(",")];
+  DATA.forEach(function(c){
+    lines.push([c.id,c.date,c.days,c.freq,c.amount,c.R,c.F,c.M,c.total,c.grade,c.risk,c.review?"是":"否",'"'+c.advice+'"'].join(","));
+  });
+  download("﻿"+lines.join("\r\n"), "客智分层_分析结果_"+ts()+".csv"); /* BOM 保证 Excel 中文不乱码 */
+}
+function downloadTemplate(){
+  var t="客户编号,最近消费日期,近12月消费次数,近12月累计消费金额\r\nC0001,2026-08-20,25,12800\r\nC0002,2026-07-05,15,6500\r\nC0003,2026-03-12,22,9800\r\nC0004,2025-11-20,8,2600";
+  download("﻿"+t,"客智分层_数据模板.csv");
+}
+function download(content,name){
+  var blob=new Blob([content],{type:"text/csv;charset=utf-8"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+  toast("已导出："+name);
+}
+function ts(){var d=new Date();return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");}
+/* ---------- 示例数据 ---------- */
+function loadDemo(){
+  var rng=(function(){var s=42;return function(){s=(s*1103515245+12345)%2147483648;return s/2147483648;};})();
+  var profiles=[
+    /* [距今最大天数, 次数区间, 金额区间, 数量] —— 覆盖五个等级 */
+    {dMax:25, f:[20,32], m:[8000,18000], n:9},    /* 核心价值 */
+    {dMax:110,dMin:61, f:[12,20], m:[4500,9000], n:7}, /* 重要保持 */
+    {dMax:45, f:[5,11], m:[1800,4200], n:12},     /* 潜力成长 */
+    {dMax:115,dMin:61, f:[2,6], m:[500,2600], n:10}, /* 一般维护 */
+    {dMax:300,dMin:130,f:[1,5], m:[300,1500], n:9},  /* 普通流失 */
+    {dMax:260,dMin:130,f:[14,26], m:[8500,16000], n:5},/* 高价值流失 */
+    {dMax:170,dMin:125,f:[7,12], m:[2200,3900], n:5}  /* 中等价值流失 */
+  ];
+  var list=[], idx=1;
+  profiles.forEach(function(p){
+    for(var i=0;i<p.n;i++){
+      var days=Math.round((p.dMin||0)+rng()*((p.dMax||30)-(p.dMin||0)));
+      var d=new Date(TODAY.getTime()-days*86400000);
+      list.push({
+        id:"C"+String(idx++).padStart(4,"0"),
+        date:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),
+        freq:Math.round(p.f[0]+rng()*(p.f[1]-p.f[0])),
+        amount:Math.round(p.m[0]+rng()*(p.m[1]-p.m[0]))
+      });
+    }
+  });
+  /* 示例数据以系统当天为最新基准，自动重置基准日期 */
+  baseDate = dateStr(TODAY);
+  document.getElementById("baseDateInput").value = baseDate;
+  setData(list,"示例数据");
+  goPage("dashboard");
+}
+/* ---------- 初始化 ---------- */
+document.getElementById("baseDateInput").value = baseDate;
+document.getElementById("baseDateInput").addEventListener("change",function(){ onBaseDateChange(this.value); });
+CHART_IDS.forEach(function(id){ attachChartEvents(document.getElementById(id)); });
+renderTable(); renderTop10(); renderRisk(); renderStrategies(); renderStats(); renderInsights();
+drawCharts();
+</script>
+</body>
+</html>
